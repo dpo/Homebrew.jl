@@ -1,6 +1,5 @@
 language: julia
-os: osx
-osx_image: xcode7.3
+os: linux
 julia:
     - 0.4
     - 0.5
@@ -8,4 +7,4 @@ julia:
 notifications:
     email: false
 after_success:
-    - julia -e 'cd(Pkg.dir("Homebrew")); Pkg.add("Coverage"); using Coverage; Coveralls.submit(Coveralls.process_folder())'
+    - julia -e 'cd(Pkg.dir("Linuxbrew")); Pkg.add("Coverage"); using Coverage; Coveralls.submit(Coveralls.process_folder())'
