@@ -71,19 +71,6 @@ function download_and_unpack(url::AbstractString, target_dir::AbstractString; st
 end
 
 """
-`clt_installed()`
-
-Checks whether the command-line tools are installed, as reported by xcode-select
-"""
-function clt_installed()
-    try
-        @compat !isempty(readchomp(pipeline(`/usr/bin/xcode-select -print-path`, stderr=DevNull)))
-    catch
-        return false
-    end
-end
-
-"""
 `git_installed()`
 
 Checks whether `git` is truly installed or not, dealing with stubs in /usr/bin
@@ -95,24 +82,6 @@ function git_installed()
 
     # If there is no `git` executable at all, fail
     if isempty(gitpath)
-        return false
-    end
-
-    # If we have a git from the CLT location, but the CLT isn't installed, fail
-    if gitpath == "/usr/bin/git" && !clt_installed()
-        return false
-    end
-
-    # check that the git version is at least 2.0.0.0.  We may end up
-    # tightening these bounds a little bit in the future, so parse
-    # out the full git version
-    m = match(r"^git version ([\d\.]+) ", readchomp(`git --version`))
-    if m === nothing
-        return false
-    end
-    gitver = [parse(Int64, x) for x in split(m.captures[1], ".")]
-
-    if gitver[1] < 2
         return false
     end
 
