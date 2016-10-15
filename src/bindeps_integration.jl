@@ -3,20 +3,20 @@ using BinDeps
 import BinDeps: PackageManager, can_use, package_available, libdir, generate_steps, LibraryDependency, provider
 import Base: show
 
-type HB <: PackageManager
+type LB <: PackageManager
     packages
 end
 
-show(io::IO, hb::HB) = write(io, "Homebrew Bottles ",
-    join(isa(hb.packages, AbstractString) ? [hb.packages] : hb.packages,", "))
+show(io::IO, lb::LB) = write(io, "Linuxbrew Bottles ",
+    join(isa(lb.packages, AbstractString) ? [lb.packages] : lb.packages,", "))
 
 
 
-# Only return true on Darwin platforms
-can_use(::Type{HB}) = Compat.KERNEL == :Darwin
+# Only return true on Linux platforms
+can_use(::Type{LB}) = Compat.KERNEL == :Linux
 
-function package_available(p::HB)
-    !can_use(HB) && return false
+function package_available(p::LB)
+    !can_use(LB) && return false
     pkgs = p.packages
     if isa(pkgs, AbstractString)
         pkgs = [pkgs]
@@ -33,11 +33,11 @@ function package_available(p::HB)
     return true
 end
 
-libdir(p::HB, dep) = joinpath(brew_prefix, "lib")
+libdir(p::LB, dep) = joinpath(brew_prefix, "lib")
 
-provider{T<:AbstractString}(::Type{HB}, packages::Vector{T}; opts...) = HB(packages)
+provider{T<:AbstractString}(::Type{LB}, packages::Vector{T}; opts...) = LB(packages)
 
-function generate_steps(dep::LibraryDependency, p::HB, opts)
+function generate_steps(dep::LibraryDependency, p::LB, opts)
     pkgs = p.packages
     if isa(pkgs, AbstractString)
         pkgs = [pkgs]
