@@ -13,7 +13,7 @@ const auto_tapname = "staticfloat/juliatranslated"
 const auto_tappath = joinpath(brew_prefix,"Library","Taps","staticfloat","homebrew-juliatranslated")
 
 # Where we download brew from
-const BREW_URL = "https://github.com/Homebrew/brew"
+const BREW_URL = "https://github.com/Linuxbrew/brew"
 const BREW_BRANCH = "master"
 const BREW_STABLE_SHA = "ed9942fbd1ec4243f0a92ab8f9b2411c8b1fb091"
 
@@ -44,12 +44,6 @@ function install_brew()
     # Tap our own "overrides" taps
     tap("staticfloat/juliadeps")
     tap("staticfloat/juliatranslated")
-
-    if !clt_installed() && !installed("cctools")
-        # If we don't have the command-line tools installed, then let's grab
-        # cctools, as we need that to install bottles that need relocation
-        add("cctools")
-    end
 
     if !git_installed() && !installed("git")
         # If we don't have a git available, install it now
