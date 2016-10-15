@@ -1,2 +1,2 @@
-using Homebrew
-Homebrew.update()
+using Linuxbrew
+Linuxbrew.update()
