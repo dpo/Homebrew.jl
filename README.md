@@ -1,6 +1,12 @@
-# Homebrew.jl (OSX only)
+# Linuxbrew.jl (Linux only)
 
-[![Build Status](https://travis-ci.org/JuliaPackaging/Homebrew.jl.svg)](https://travis-ci.org/JuliaPackaging/Homebrew.jl)
+[![Build Status](https://travis-ci.org/dpo/Linuxbrew.jl.svg?branch=master)](https://travis-ci.org/dpo/Linuxbrew.jl)
+[![Coverage Status](https://coveralls.io/repos/github/dpo/Linuxbrew.jl/badge.svg)](https://coveralls.io/github/dpo/Linuxbrew.jl)
+
+This is a fork of [Homebrew.jl](https://github.com/JuliaPackaging/Homebrew.jl).
+This README has not been updated yet.
+
+---
 
 Homebrew.jl sets up a [homebrew](http://brew.sh) installation inside your [Julia](http://julialang.org/) package directory.  It uses Homebrew to provide specialized binary packages to satisfy dependencies for other Julia packages, without the need for a compiler or other development tools; it is completely self-sufficient.
 
