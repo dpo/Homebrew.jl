@@ -1,24 +1,24 @@
-using Homebrew
+using Linuxbrew
 using Base.Test
 
 # Print some debugging info
-info("Using Homebrew.jl installed to $(Homebrew.prefix())")
+info("Using Linuxbrew.jl installed to $(Linuxbrew.prefix())")
 
 # Restore pkg-config to its installed (or non-installed) state at the end of all of this
-pkg_was_installed = Homebrew.installed("pkg-config")
-hdf_was_installed = Homebrew.installed("homebrew/science/hdf5")
+pkg_was_installed = Linuxbrew.installed("pkg-config")
+hdf_was_installed = Linuxbrew.installed("homebrew/science/hdf5")
 
 if pkg_was_installed
     info("Removing pkg-config for our testing...")
-    Homebrew.rm("pkg-config")
+    Linuxbrew.rm("pkg-config")
 end
 
 # Add pkg-config
-Homebrew.add("pkg-config")
-@test Homebrew.installed("pkg-config") == true
+Linuxbrew.add("pkg-config")
+@test Linuxbrew.installed("pkg-config") == true
 
 # Print versioninfo() to boost coverage
-Homebrew.versioninfo()
+Linuxbrew.versioninfo()
 
 # Now show that we have it and that it's the right version
 function strip_underscores(str)
@@ -29,30 +29,30 @@ function strip_underscores(str)
         return str
     end
 end
-pkgconfig = Homebrew.info("pkg-config")
+pkgconfig = Linuxbrew.info("pkg-config")
 version = readchomp(`pkg-config --version`)
 @test version == strip_underscores(pkgconfig.version)
-@test Homebrew.installed(pkgconfig) == true
-info("$(pkgconfig) installed to: $(Homebrew.prefix(pkgconfig))")
+@test Linuxbrew.installed(pkgconfig) == true
+info("$(pkgconfig) installed to: $(Linuxbrew.prefix(pkgconfig))")
 
-@test isdir(Homebrew.prefix("pkg-config"))
-@test isdir(Homebrew.prefix(pkgconfig))
+@test isdir(Linuxbrew.prefix("pkg-config"))
+@test isdir(Linuxbrew.prefix(pkgconfig))
 
-# Run through some of the Homebrew API, both with strings and with BrewPkg objects
-@test length(filter(x -> x.name == "pkg-config", Homebrew.list())) > 0
-@test Homebrew.linked("pkg-config") == true
-@test Homebrew.linked(pkgconfig) == true
+# Run through some of the Linuxbrew API, both with strings and with BrewPkg objects
+@test length(filter(x -> x.name == "pkg-config", Linuxbrew.list())) > 0
+@test Linuxbrew.linked("pkg-config") == true
+@test Linuxbrew.linked(pkgconfig) == true
 
 # Test dependency inspection
-@test Homebrew.direct_deps("pkg-config") == []
-@test Homebrew.direct_deps(pkgconfig) == []
-@test Homebrew.direct_deps("nettle") == [Homebrew.info("gmp")]
-@test Homebrew.direct_deps(Homebrew.info("nettle")) == [Homebrew.info("gmp")]
+@test Linuxbrew.direct_deps("pkg-config") == []
+@test Linuxbrew.direct_deps(pkgconfig) == []
+@test Linuxbrew.direct_deps("nettle") == [Linuxbrew.info("gmp")]
+@test Linuxbrew.direct_deps(Linuxbrew.info("nettle")) == [Linuxbrew.info("gmp")]
 
 # Run through our sorted deps routines, ensuring that everything is sorted
-sortdeps = Homebrew.deps_sorted("pango")
+sortdeps = Linuxbrew.deps_sorted("pango")
 for idx in 1:length(sortdeps)
-    for dep in Homebrew.direct_deps(sortdeps[idx])
+    for dep in Linuxbrew.direct_deps(sortdeps[idx])
         depidx = findfirst(x -> (x.name == dep.name), sortdeps)
         @test depidx != 0
         @test depidx < idx
@@ -60,78 +60,78 @@ for idx in 1:length(sortdeps)
 end
 
 # Test that we can probe for bottles properly
-@test Homebrew.has_bottle("ack") == false
-@test Homebrew.has_bottle("cairo") == true
+@test Linuxbrew.has_bottle("ack") == false
+@test Linuxbrew.has_bottle("cairo") == true
 # I will be a very happy man the day this test starts to fail
-@test Homebrew.has_relocatable_bottle("cairo") == false
-@test Homebrew.has_relocatable_bottle("staticfloat/juliadeps/libgfortran") == true
-@test Homebrew.json(pkgconfig)["name"] == "pkg-config"
+@test Linuxbrew.has_relocatable_bottle("cairo") == false
+@test Linuxbrew.has_relocatable_bottle("staticfloat/juliadeps/libgfortran") == true
+@test Linuxbrew.json(pkgconfig)["name"] == "pkg-config"
 
 # Test that has_bottle knows which OSX version we're running on.
-@test Homebrew.has_bottle("ld64") == false
+@test Linuxbrew.has_bottle("ld64") == false
 
 # Test that we can translate properly
 info("Translation should pass:")
-@test Homebrew.translate_formula("gettext"; verbose=true) == "staticfloat/juliatranslated/gettext"
+@test Linuxbrew.translate_formula("gettext"; verbose=true) == "staticfloat/juliatranslated/gettext"
 info("Translation should fail because it has no bottles:")
-@test Homebrew.translate_formula("ack"; verbose=true) == "ack"
+@test Linuxbrew.translate_formula("ack"; verbose=true) == "ack"
 
 if hdf_was_installed
     # Remove hdf5 before we start messing around with it
-    Homebrew.rm("homebrew/science/hdf5"; force=true)
+    Linuxbrew.rm("homebrew/science/hdf5"; force=true)
 end
 
 # Make sure translation works properly with other taps
-Homebrew.delete_translated_formula("Homebrew/science/hdf5"; verbose=true)
+Linuxbrew.delete_translated_formula("Linuxbrew/science/hdf5"; verbose=true)
 info("Translation should pass because we just deleted hdf5 from translation cache:")
-@test Homebrew.translate_formula("Homebrew/science/hdf5"; verbose=true) == "staticfloat/juliatranslated/hdf5"
+@test Linuxbrew.translate_formula("Linuxbrew/science/hdf5"; verbose=true) == "staticfloat/juliatranslated/hdf5"
 info("Translation should fail because hdf5 has already been translated:")
 # Do it a second time so we can get coverage of practicing that particular method of bailing out
-Homebrew.translate_formula(Homebrew.info("Homebrew/science/hdf5"); verbose=true)
+Linuxbrew.translate_formula(Linuxbrew.info("Linuxbrew/science/hdf5"); verbose=true)
 
 # Test that installation of a formula from a tap when it's already been translated works
-Homebrew.add("Homebrew/science/hdf5"; verbose=true)
+Linuxbrew.add("Linuxbrew/science/hdf5"; verbose=true)
 
 if !hdf_was_installed
-    Homebrew.rm("Homebrew/science/hdf5")
+    Linuxbrew.rm("Linuxbrew/science/hdf5")
 end
 
 # Now that we have homebrew/science installed, test to make sure that prefix() works
 # with taps properly:
-@test Homebrew.prefix("metis4") == Homebrew.prefix("homebrew/science/metis4")
+@test Linuxbrew.prefix("metis4") == Linuxbrew.prefix("homebrew/science/metis4")
 
 # Test more miscellaneous things
-fontconfig = Homebrew.info("staticfloat/juliadeps/fontconfig")
-@test Homebrew.formula_path(fontconfig) == joinpath(Homebrew.tappath, "fontconfig.rb")
-@test !isempty(Homebrew.read_formula("xz"))
-@test !isempty(Homebrew.read_formula(fontconfig))
+fontconfig = Linuxbrew.info("staticfloat/juliadeps/fontconfig")
+@test Linuxbrew.formula_path(fontconfig) == joinpath(Linuxbrew.tappath, "fontconfig.rb")
+@test !isempty(Linuxbrew.read_formula("xz"))
+@test !isempty(Linuxbrew.read_formula(fontconfig))
 info("add() should fail because this actually isn't a package name:")
-@test_throws ArgumentError Homebrew.add("thisisntapackagename")
+@test_throws ArgumentError Linuxbrew.add("thisisntapackagename")
 
-Homebrew.unlink(pkgconfig)
-@test Homebrew.installed(pkgconfig) == true
-@test Homebrew.linked(pkgconfig) == false
-Homebrew.link(pkgconfig)
-@test Homebrew.installed(pkgconfig) == true
-@test Homebrew.linked(pkgconfig) == true
+Linuxbrew.unlink(pkgconfig)
+@test Linuxbrew.installed(pkgconfig) == true
+@test Linuxbrew.linked(pkgconfig) == false
+Linuxbrew.link(pkgconfig)
+@test Linuxbrew.installed(pkgconfig) == true
+@test Linuxbrew.linked(pkgconfig) == true
 
 # Can't really do anything useful with these, but can at least run them to ensure they work
-Homebrew.outdated()
-Homebrew.update()
-Homebrew.postinstall("pkg-config")
-Homebrew.postinstall(pkgconfig)
-Homebrew.delete_translated_formula("gettext"; verbose=true)
-Homebrew.delete_all_translated_formulae(verbose=true)
+Linuxbrew.outdated()
+Linuxbrew.update()
+Linuxbrew.postinstall("pkg-config")
+Linuxbrew.postinstall(pkgconfig)
+Linuxbrew.delete_translated_formula("gettext"; verbose=true)
+Linuxbrew.delete_all_translated_formulae(verbose=true)
 
 # Test deletion as well, showing that the array-argument form continues on after errors
-Homebrew.rm(pkgconfig)
-Homebrew.add(pkgconfig)
+Linuxbrew.rm(pkgconfig)
+Linuxbrew.add(pkgconfig)
 info("rm() should fail because this isn't actually a package name:")
-Homebrew.rm(["thisisntapackagename", "pkg-config"])
-@test Homebrew.installed("pkg-config") == false
-@test Homebrew.linked("pkg-config") == false
+Linuxbrew.rm(["thisisntapackagename", "pkg-config"])
+@test Linuxbrew.installed("pkg-config") == false
+@test Linuxbrew.linked("pkg-config") == false
 
 if pkg_was_installed
     info("Adding pkg-config back again...")
-    Homebrew.add("pkg-config")
+    Linuxbrew.add("pkg-config")
 end

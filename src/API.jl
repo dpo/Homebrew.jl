@@ -453,7 +453,7 @@ Please report these packages to https://github.com/JuliaLang/Homebrew.jl:
     end
 
     # Get list of outdated packages and remove them all
-    for dep in filter(pkg -> pkg.name in sorted_deps, Homebrew.outdated())
+    for dep in filter(pkg -> pkg.name in sorted_deps, Linuxbrew.outdated())
         unlink(dep; verbose=verbose)
     end
 
