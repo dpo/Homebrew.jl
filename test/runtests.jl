@@ -5,13 +5,22 @@ using Base.Test
 info("Using Linuxbrew.jl installed to $(Linuxbrew.prefix())")
 
 # Restore pkg-config to its installed (or non-installed) state at the end of all of this
+elf_was_installed = Linuxbrew.installed("patchelf")
 pkg_was_installed = Linuxbrew.installed("pkg-config")
 hdf_was_installed = Linuxbrew.installed("homebrew/science/hdf5")
 
+if elf_was_installed
+    info("Removing patchelf for our testing...")
+    Linuxbrew.rm("patchelf")
+end
 if pkg_was_installed
     info("Removing pkg-config for our testing...")
     Linuxbrew.rm("pkg-config")
 end
+
+# Add patchelf
+Linuxbrew.add("patchelf")
+@test Linuxbrew.installed("patchelf") == true
 
 # Add pkg-config
 Linuxbrew.add("pkg-config")
@@ -131,6 +140,10 @@ Linuxbrew.rm(["thisisntapackagename", "pkg-config"])
 @test Linuxbrew.installed("pkg-config") == false
 @test Linuxbrew.linked("pkg-config") == false
 
+if elf_was_installed
+    info("Adding patchelf back again...")
+    Linuxbrew.add("patchelf")
+end
 if pkg_was_installed
     info("Adding pkg-config back again...")
     Linuxbrew.add("pkg-config")
