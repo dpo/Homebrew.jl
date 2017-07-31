@@ -24,7 +24,7 @@ function update_env()
 
     # We need to set our own, private, cache directory so that we don't conflict with
     # user-maintained Homebrew installations, and multiple users can use it at once
-    ENV["HOMEBREW_CACHE"] = joinpath(ENV["HOME"],"Library/Caches/Homebrew.jl/")
+    ENV["HOMEBREW_CACHE"] = joinpath(ENV["HOME"],".cache/Homebrew.jl/")
 
     # We invoke `brew` a lot, let's disable automatic updates since we do those explicitly
     ENV["HOMEBREW_NO_AUTO_UPDATE"] = "1"
